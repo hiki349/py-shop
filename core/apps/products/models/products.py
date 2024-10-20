@@ -1,6 +1,7 @@
 from django.db import models
 
 from core.apps.common.models import TimedBaseModel
+from core.apps.products.entities.products import Product as ProductEntity
 
 class Product(TimedBaseModel):
     title = models.CharField(
@@ -15,6 +16,14 @@ class Product(TimedBaseModel):
         verbose_name='Is product visible',
         default=True,
 	)
+
+    def to_entity(self) -> ProductEntity:
+        return ProductEntity(
+            title=self.title,
+            description=self.description,
+            created_at=self.created_at,
+            updated_at=self.updated_at,
+        )
 
     def __str__(self):
         return self.title
