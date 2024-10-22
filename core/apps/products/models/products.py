@@ -3,6 +3,7 @@ from django.db import models
 from core.apps.common.models import TimedBaseModel
 from core.apps.products.entities.products import Product as ProductEntity
 
+
 class Product(TimedBaseModel):
     title = models.CharField(
         verbose_name='Product title',
@@ -15,7 +16,7 @@ class Product(TimedBaseModel):
     is_visible = models.BooleanField(
         verbose_name='Is product visible',
         default=True,
-	)
+    )
 
     def to_entity(self) -> ProductEntity:
         return ProductEntity(

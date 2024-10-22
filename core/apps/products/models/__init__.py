@@ -1,1 +1,1 @@
-from .products import Product  # no qa
+from .products import Product  # noqa
