@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     # first party
     'core.apps.products',
+    'core.apps.customers',
 ]
 
 MIDDLEWARE = [
