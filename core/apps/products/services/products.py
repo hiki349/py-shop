@@ -9,6 +9,7 @@ from django.db.models import Q
 from core.api.filters import PaginationIn
 from core.api.v1.products.filters import ProductFilters
 from core.apps.products.entities.products import Product
+from core.apps.products.exceptions.products import ProductNotFound
 from core.apps.products.models.products import Product as ProductModel
 
 
@@ -18,10 +19,16 @@ class BaseProductService(ABC):
         self,
         filters: ProductFilters,
         pagination: PaginationIn,
-    ) -> Iterable[Product]: ...
+    ) -> Iterable[Product]:
+        ...
 
     @abstractmethod
-    def get_product_count(self, filters: ProductFilters) -> int: ...
+    def get_product_count(self, filters: ProductFilters) -> int:
+        ...
+
+    @abstractmethod
+    def get_product_by_id(self, product_id: int) -> Product:
+        ...
 
 
 class ORMProductService(BaseProductService):
@@ -50,3 +57,11 @@ class ORMProductService(BaseProductService):
         query = self._build_product_query(filters)
 
         return ProductModel.objects.filter(query).count()
+
+    def get_product_by_id(self, product_id: int) -> Product:
+        try:
+            product = ProductModel.objects.get(id=product_id)
+
+            return product.to_entity()
+        except ProductModel.DoesNotExist:
+            raise ProductNotFound(product_id=product_id)
