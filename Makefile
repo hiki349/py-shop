@@ -7,6 +7,7 @@ APP_CONTAINER = main-app
 LOGS = docker logs
 ENV = --env-file .env
 MANAGE_PY = python manage.py
+MONITORING_FILE = docker-compose/monitoring.yml
 
 
 .PHONY: storages
@@ -33,9 +34,17 @@ app:
 app-down:
 	${DC} -f ${APP_FILE} -f ${STORAGES_FILE} down
 
+.PHONY: monitoring
+monitoring:
+	${DC} -f ${MONITORING_FILE} ${ENV} up --build -d
+
 .PHONY: app-logs
 app-logs:
 	${LOGS} ${APP_CONTAINER} -f
+
+.PHONY: monitoring-logs
+monitoring-logs:
+	${DC} -f ${MONITORING_FILE} ${ENV} logs -f
 
 .PHONY: migrate
 migrate:

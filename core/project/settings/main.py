@@ -43,12 +43,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # third party
+    "elasticapm.contrib.django",
+
     # first party
     'core.apps.products',
     'core.apps.customers',
 ]
 
 MIDDLEWARE = [
+    'core.project.middlewares.ElasticApmMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -135,3 +139,13 @@ STATIC_ROOT = BASE_DIR / 'static'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+ELASTIC_APM = {
+    'SERVICE_NAME': 'py-shop',
+    # 'SECRET_TOKEN': env('ELASTIC_SECRET_TOKEN', default='secrettoken'), # noqa
+    'SERVER_URL': env('APM_URL', default='http://apm-server:8200'),
+    'CAPTURE_BODY': 'all',
+    'ENVIRONMENT': 'prod',
+    'USE_ELASTIC_EXCEPTHOOK': True,
+}
