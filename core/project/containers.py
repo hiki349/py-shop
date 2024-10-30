@@ -61,7 +61,7 @@ def _initialize_container():
     container.register(SingleReviewValidatorService)
     container.register(ReviewRatingValidatorService)
 
-    container.register(Logger, factory=getLogger, name='elasticapm.errors')
+    container.register(Logger, factory=getLogger, name='django.request')
 
     def build_validators() -> BaseReviewValidatorService:
         return ComposedReviewValidatorService(
