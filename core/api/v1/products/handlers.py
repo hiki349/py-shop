@@ -3,6 +3,7 @@ from ninja import (
     Query,
     Router,
 )
+from ninja.errors import HttpError
 
 from core.api.filters import PaginationIn
 from core.api.schemas import (
@@ -12,6 +13,7 @@ from core.api.schemas import (
 )
 from core.api.v1.products.filters import ProductFilters
 from core.api.v1.products.schemas import ProductSchema
+from core.apps.common.exceptions import ServicesException
 from core.apps.products.filters.products import ProductFilters as ProductFiltersEntity
 from core.apps.products.services.products import BaseProductService
 from core.project.containers import get_container
@@ -45,3 +47,22 @@ def get_product_list_handler(
     return ApiResponse(
         data=ListPagintedResponse(items=items, pagination=pagination_out),
     )
+
+
+@router.get("{product_id}", response=ApiResponse[ProductSchema])
+def get_product_by_id_handler(
+    request: HttpRequest,
+    product_id: int,
+) -> ApiResponse[ProductSchema]:
+    container = get_container()
+    service: BaseProductService = container.resolve(BaseProductService)
+
+    try:
+        product = service.get_product_by_id(product_id)
+    except ServicesException as exception:
+        raise HttpError(
+            status_code=404,
+            message=exception.message,
+        ) from exception
+
+    return ApiResponse(data=ProductSchema.from_entity(product))
